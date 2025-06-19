@@ -485,6 +485,14 @@
 </footer>
 <!-- End Footer Section -->
 
+      <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+      <df-messenger
+              intent="WELCOME"
+              chat-title="chatbot"
+              agent-id="d9e137d5-c880-49a6-87e7-d7735881d78f"
+              language-code="vi"
+      ></df-messenger>
+
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/tiny-slider.js"></script>
 <script src="js/custom.js"></script>
