@@ -1,10 +1,8 @@
 
 package com.example.backend.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Cart {
     private Map<Integer, CartItem> items = new HashMap<>();
@@ -55,16 +53,21 @@ public class Cart {
             if (existing.getProduct().getId() == rental.getProduct().getId()
                     && existing.getRentDate().equals(rental.getRentDate())
                     && existing.getReturnDate().equals(rental.getReturnDate())) {
-                return; // Đã tồn tại => bỏ qua để tránh trùng
+                return;
             }
         }
         // Nếu chưa tồn tại thì thêm mới
         rentalItems.add(rental);
     }
 
-    public void removeRental(RentalItem rental) {
-        rentalItems.remove(rental);
+    public void removeRentalItem(int productId, LocalDate rentDate, LocalDate returnDate) {
+        rentalItems.removeIf(rental ->
+                rental.getProduct().getId() == productId &&
+                        rental.getRentDate().isEqual(rentDate) &&
+                        rental.getReturnDate().isEqual(returnDate)
+        );
     }
+
 
     public List<RentalItem> getRentalItems() {
         return rentalItems;
