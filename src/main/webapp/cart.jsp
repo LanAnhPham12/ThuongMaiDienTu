@@ -132,7 +132,7 @@
 
         <%-- Hiển thị sản phẩm thuê nếu có --%>
         <% if (cart != null && !cart.getRentalItems().isEmpty()) { %>
-        <h3>Sản phẩm thuê</h3>
+        <h3 style="margin-top: 50px">Sản phẩm thuê</h3>
         <table class="table table-bordered">
           <thead>
           <tr>
@@ -143,24 +143,34 @@
             <th>Ngày trả</th>
             <th>Số ngày</th>
             <th>Tổng tiền</th>
+            <th>Xóa</th>
           </tr>
           </thead>
           <tbody>
           <%
             for (com.example.backend.models.RentalItem rental : cart.getRentalItems()) {
-              String rentalPricePerDay = currencyFormatter.format(rental.getProduct().getRentalPrice());
-              String totalRentalPrice = currencyFormatter.format(rental.getTotalPrice());
+              double rentalPricePerDay = rental.getRentalPricePerDay(); // lấy từ RentalItem
+              String formattedRentalPricePerDay = currencyFormatter.format(rentalPricePerDay);
+              String formattedTotalRentalPrice = currencyFormatter.format(rental.getTotalPrice());
           %>
           <tr>
             <td>
-              <img src="<%=rental.getProduct().getImages().get(0).getImageUrl()%>" alt="product_img" style="width: 80px;" />
+              <img src="<%= rental.getProduct().getImages().get(0).getImageUrl() %>" alt="product_img" style="width: 80px;" />
             </td>
-            <td><%=rental.getProduct().getName()%></td>
-            <td><%=rentalPricePerDay%></td>
-            <td><%=rental.getRentDate()%></td>
-            <td><%=rental.getReturnDate()%></td>
-            <td><%=rental.getRentalDays()%></td>
-            <td><%=totalRentalPrice%></td>
+            <td><%= rental.getProduct().getName() %></td>
+            <td><%= formattedRentalPricePerDay %></td>
+            <td><%= rental.getRentDate() %></td>
+            <td><%= rental.getReturnDate() %></td>
+            <td><%= rental.getRentalDays() %></td>
+            <td><%= formattedTotalRentalPrice %></td>
+            <td>
+              <form action="remove-rental" method="post" style="display:inline;">
+                <input type="hidden" name="productId" value="<%= rental.getProduct().getId() %>" />
+                <input type="hidden" name="rentDate" value="<%= rental.getRentDate() %>" />
+                <input type="hidden" name="returnDate" value="<%= rental.getReturnDate() %>" />
+                <button type="submit" class="btn btn-sm btn-danger">X</button>
+              </form>
+            </td>
           </tr>
           <%
             }
@@ -168,45 +178,49 @@
           </tbody>
         </table>
         <% } %>
-
       </div>
 
       <!-- Cột phải -->
       <div class="cart-content-right" style="flex: 1; max-width: 30%">
         <%
-          if (cart != null && !cart.getItems().isEmpty()) {
-            String formattedTotalPrice = currencyFormatter.format(cart.getTotalPrice());
+          if (cart != null) {
+            double totalBuy = cart.getTotalPrice();
+            double totalRent = cart.getTotalRentalPrice();
+            double totalAll = totalBuy + totalRent;
+
+            String formattedBuy = currencyFormatter.format(totalBuy);
+            String formattedRent = currencyFormatter.format(totalRent);
+            String formattedAll = currencyFormatter.format(totalAll);
         %>
         <table class="table table-bordered">
           <tr>
             <th colspan="2">TỔNG TIỀN GIỎ HÀNG</th>
           </tr>
-          <tr>
-            <td>TỔNG SẢN PHẨM</td>
-            <td><%=cart.getItems().size()%></td>
-          </tr>
+<%--          <tr>--%>
+<%--            <td>TỔNG SẢN PHẨM</td>--%>
+<%--            <td><%= cart.getItems().size() %></td>--%>
+<%--          </tr>--%>
           <tr>
             <td>TỔNG TIỀN HÀNG</td>
-            <td>
-              <p data-cart-total><%= formattedTotalPrice %></p>
-            </td>
+            <td><%= formattedBuy %></td>
+          </tr>
+          <tr>
+            <td>TỔNG TIỀN THUÊ</td>
+            <td><%= formattedRent %></td>
           </tr>
           <tr>
             <td>TẠM TÍNH</td>
-            <td>
-              <p style="color: black; font-weight: bold" data-cart-total><%= formattedTotalPrice %></p>
-            </td>
+            <td style="font-weight: bold"><%= formattedAll %></td>
           </tr>
         </table>
-        <%
-          }
-        %>
+        <% } %>
 
         <div class="cart-content-right-button d-flex flex-column gap-2">
           <a class="btn btn-outline-secondary" href="shop?categoryId=3">TIẾP TỤC MUA HÀNG</a>
           <a class="btn btn-primary" href="delivery.jsp">THANH TOÁN</a>
         </div>
       </div>
+
     </div>
   </div>
 </section>

@@ -19,30 +19,6 @@ public class Cart {
         }
     }
 
-//    public void addRental(RentalItem rental) {
-//        rentalItems.add(rental);
-//    }
-public void addRental(RentalItem rental) {
-    for (RentalItem existing : rentalItems) {
-        // Kiểm tra trùng sản phẩm và ngày thuê + trả
-        if (existing.getProduct().getId() == rental.getProduct().getId() &&
-                existing.getRentDate().equals(rental.getRentDate()) &&
-                existing.getReturnDate().equals(rental.getReturnDate())) {
-
-            // Cộng dồn thời gian và giá thuê
-            long newDays = existing.getRentalDays() + rental.getRentalDays();
-            double newTotal = existing.getTotalPrice() + rental.getTotalPrice();
-
-            existing.setRentalDays(newDays);
-            existing.setTotalPrice(newTotal);
-            return; // Không cần thêm mới
-        }
-    }
-
-    // Nếu chưa tồn tại, thêm mới vào danh sách
-    rentalItems.add(rental);
-}
-
     public void removeItem(int productId) {
         items.remove(productId);
     }
@@ -71,17 +47,29 @@ public void addRental(RentalItem rental) {
         }
     }
 
+    // sp thuê
 
-
-    public List<RentalItem> getRentalItems() {
-        return rentalItems;
+    public void addRental(RentalItem rental) {
+        for (RentalItem existing : rentalItems) {
+            // Nếu đã có sản phẩm thuê cùng ngày thuê và trả thì không cộng dồn thủ công nữa
+            if (existing.getProduct().getId() == rental.getProduct().getId()
+                    && existing.getRentDate().equals(rental.getRentDate())
+                    && existing.getReturnDate().equals(rental.getReturnDate())) {
+                return; // Đã tồn tại => bỏ qua để tránh trùng
+            }
+        }
+        // Nếu chưa tồn tại thì thêm mới
+        rentalItems.add(rental);
     }
 
     public void removeRental(RentalItem rental) {
         rentalItems.remove(rental);
     }
 
-    // Tính tổng tiền thuê tất cả rentalItems
+    public List<RentalItem> getRentalItems() {
+        return rentalItems;
+    }
+
     public double getTotalRentalPrice() {
         return rentalItems.stream()
                 .mapToDouble(RentalItem::getTotalPrice)

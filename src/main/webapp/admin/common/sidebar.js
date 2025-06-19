@@ -11,6 +11,10 @@ sidebar.innerHTML = `
         <!-- list item -->
         <div class="list-navbar">
           <ul class="list-item">
+            <li class="item" id="item-statistic">
+              <i class="fa-solid fa-chart-column"></i>
+              <a href="statistics">Thống kê</a>
+            </li>            
             <li class="item" id= "item-product">
               <i class="fa-solid fa-fan"></i>
               <a href ="products">Quản lý sản phẩm</a>

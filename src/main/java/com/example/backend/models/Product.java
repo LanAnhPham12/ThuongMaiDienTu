@@ -15,7 +15,7 @@ public class Product {
     private List<ProductImage> images; // Thêm danh sách hình ảnh sản phẩm
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private double rentalPrice;
+    private double rentalRate;
 
     // Constructor không tham số (nếu cần)
     public Product() {
@@ -57,11 +57,11 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
-    public Product(int id, String name, double price, double rentalPrice) {
+    public Product(int id, String name, double price, double rentalRate) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.rentalPrice = rentalPrice;
+        this.rentalRate = rentalRate;
     }
 
     // Getters và Setters
@@ -161,6 +161,6 @@ public class Product {
     }
 
     public double getRentalPrice() {
-        return price * rentalPrice;
+        return price * rentalRate;
     }
 }

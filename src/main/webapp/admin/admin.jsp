@@ -128,8 +128,13 @@
     </div>
 </div>
 </body>
-<script src="<%= request.getContextPath() %>/admin/common/sidebar.js?v=1.0"></script>
-<script src="<%= request.getContextPath() %>/admin/common/navbar.js?v=1.0"></script>
+<script src="<%= request.getContextPath() %>/admin/common/sidebar.js"></script>
+<script src="<%= request.getContextPath() %>/admin/common/navbar.js"></script>
+<script type="module">
+    import activeElement from "/admin/common/common.js"
+    const element = document.getElementById("item-category")
+    activeElement(element)
+</script>
 <script type="module">
     import activeElement from "./common/common.js"
 

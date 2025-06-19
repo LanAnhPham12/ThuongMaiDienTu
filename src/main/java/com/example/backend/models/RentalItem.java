@@ -4,18 +4,18 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class RentalItem {
-    private Product product;       // Sản phẩm thuê
-    private LocalDate rentDate;    // Ngày bắt đầu thuê
-    private LocalDate returnDate;  // Ngày kết thúc thuê
-    private long rentalDays;       // Số ngày thuê
-    private double totalPrice;     // Tổng tiền thuê
+    private Product product;
+    private LocalDate rentDate;
+    private LocalDate returnDate;
+    private long rentalDays;
+    private double totalPrice;
 
-    public RentalItem(Product product, LocalDate rentDate, LocalDate returnDate, long rentalDays, double totalPrice) {
+    public RentalItem(Product product, LocalDate rentDate, LocalDate returnDate) {
         this.product = product;
         this.rentDate = rentDate;
         this.returnDate = returnDate;
-        this.rentalDays = rentalDays;
-        this.totalPrice = totalPrice;
+        recalculateRentalDays();
+        recalculateTotalPrice();
     }
 
     public Product getProduct() {
@@ -51,23 +51,15 @@ public class RentalItem {
         return rentalDays;
     }
 
-    public void setRentalDays(long rentalDays) {
-        this.rentalDays = rentalDays;
-        recalculateTotalPrice();
-    }
-
     public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
+    public double getRentalPricePerDay() {
+        return product != null ? product.getPrice() * 0.1 : 0;
     }
 
-    /**
-     * Tính lại số ngày thuê dựa trên rentDate và returnDate.
-     */
-    public void recalculateRentalDays() {
+    private void recalculateRentalDays() {
         if (rentDate != null && returnDate != null && !returnDate.isBefore(rentDate)) {
             this.rentalDays = ChronoUnit.DAYS.between(rentDate, returnDate) + 1;
         } else {
@@ -75,15 +67,7 @@ public class RentalItem {
         }
     }
 
-    /**
-     * Tính lại tổng tiền thuê dựa trên giá thuê của sản phẩm và số ngày thuê.
-     */
-    public void recalculateTotalPrice() {
-        if (product != null) {
-            double pricePerDay = product.getRentalPrice();
-            this.totalPrice = pricePerDay * rentalDays;
-        } else {
-            this.totalPrice = 0;
-        }
+    private void recalculateTotalPrice() {
+        this.totalPrice = getRentalPricePerDay() * rentalDays;
     }
 }
