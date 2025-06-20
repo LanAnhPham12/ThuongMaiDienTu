@@ -139,23 +139,42 @@
           <label for="shippingAddress">Địa chỉ giao hàng:</label>
           <input type="text" id="shippingAddress" name="shippingAddress" required/>
 
-          <!-- Payment Method -->
-          <label for="paymentMethod">Phương thức thanh toán:</label>
-          <select id="paymentMethod" name="paymentMethod" required>
-            <option value="Credit Card">Credit Card</option>
-            <option value="Cash on Delivery">Cash on Delivery</option>
-          </select>
+<%--          <!-- Payment Method -->--%>
+<%--          <label for="paymentMethod">Phương thức thanh toán:</label>--%>
+<%--          <select id="paymentMethod" name="paymentMethod" required>--%>
+<%--            <option value="Credit Card">Credit Card</option>--%>
+<%--            <option value="Cash on Delivery">Cash on Delivery</option>--%>
+<%--          </select>--%>
 
-          <!-- Hidden Total Amount Field -->
-          <input type="hidden" name="totalAmount" value="<%= totalAmount * 1.1 %>"/>
+<%--          <!-- Hidden Total Amount Field -->--%>
+<%--          <input type="hidden" name="totalAmount" value="<%= totalAmount * 1.1 %>"/>--%>
 
-          <!-- Buttons -->
-          <div class="delivery-content-left-button now">
-            <a href="cart.jsp"><span>&#171;</span> Quay lại giỏ hàng</a>
-            <button type="submit" style="font-weight: bold;">
-              THANH TOÁN VÀ GIAO HÀNG
-            </button>
+<%--          <!-- Buttons -->--%>
+<%--          <div class="delivery-content-left-button now">--%>
+<%--            <a href="cart.jsp"><span>&#171;</span> Quay lại giỏ hàng</a>--%>
+<%--            <button type="submit" style="font-weight: bold;">--%>
+<%--              THANH TOÁN VÀ GIAO HÀNG--%>
+<%--            </button>--%>
+<%--          </div>--%>
+          <div class="payment-buttons" style="margin: 20px 0;">
+            <!-- Nút COD (gửi đến placeOrder như cũ) -->
+            <form action="placeOrder" method="POST" style="display:inline-block;">
+              <input type="hidden" name="shippingAddress" value="" id="addressCOD"/>
+              <input type="hidden" name="paymentMethod" value="Cash on Delivery"/>
+              <input type="hidden" name="totalAmount" value="<%= totalAmount * 1.1 %>"/>
+              <button type="submit" class="btn btn-warning">Thanh toán khi nhận hàng</button>
+            </form>
+
+            <!-- Nút VNPAY Credit Card -->
+<%--            <form action="ajaxServlet" method="POST" style="display:inline-block; margin-left: 10px;">--%>
+<%--              <input type="hidden" name="amount" value="<%= (int)(totalAmount * 1.1) %>"/>--%>
+<%--              <input type="hidden" name="language" value="vn"/>--%>
+<%--              <input type="hidden" name="bankCode" value=""/> <!-- Bạn có thể gắn thêm dropdown chọn ngân hàng nếu muốn -->--%>
+<%--              <button type="submit" class="btn btn-primary">Thanh toán qua VNPAY</button>--%>
+<%--            </form>--%>
+            <button type="button" class="btn btn-primary" onclick="payWithVnpay()">Thanh toán qua VNPAY</button>
           </div>
+
         </form>
       </div>
     </div>
@@ -167,6 +186,34 @@
 <!-- Start Footer Section -->
 <footer class="footer-section"></footer>
 <!-- End Footer Section -->
+<script>
+  function payWithVnpay() {
+    const formData = new URLSearchParams();
+    formData.append("amount", "<%= (int)(totalAmount * 1) %>");
+    formData.append("language", "vn");
+    formData.append("bankCode", ""); // hoặc lấy từ dropdown nếu có
+
+    fetch("ajaxServlet", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.code === "00") {
+                window.location.href = data.data; // 👉 redirect tới link thanh toán
+              } else {
+                alert("Lỗi tạo thanh toán: " + data.message);
+              }
+            })
+            .catch(error => {
+              console.error("Lỗi khi gửi yêu cầu:", error);
+              alert("Không thể gửi yêu cầu thanh toán.");
+            });
+  }
+</script>
 
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/tiny-slider.js"></script>
